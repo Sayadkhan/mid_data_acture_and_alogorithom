@@ -98,32 +98,50 @@ void insert_tail(Node *&head, Node *&tail, int val)
   }
 }
 
-void insert_at_position(Node *&head, Node *&tail, int pos, int val)
+void delete_at_position(Node *&head, Node *&tail, int pos)
 {
-  if (pos == 0)
+  if (head == NULL || pos < 0)
   {
-    insert_head(head, tail, val);
+    // cout << "Invalid" << endl;
     return;
   }
 
-  Node *newNode = new Node(val);
   Node *tmp = head;
-  for (int i = 1; i <= pos - 1; i++)
+  for (int i = 0; i < pos; ++i)
   {
+    if (tmp == NULL)
+    {
+      // cout << "Invalid" << endl;
+      return;
+    }
     tmp = tmp->next;
   }
-  newNode->next = tmp->next;
+
+  if (tmp == NULL)
+  {
+    // cout << "Invalid" << endl;
+    return;
+  }
+
+  if (tmp->prev != NULL)
+  {
+    tmp->prev->next = tmp->next;
+  }
+  else
+  {
+    head = tmp->next;
+  }
+
   if (tmp->next != NULL)
   {
-    tmp->next->prev = newNode;
+    tmp->next->prev = tmp->prev;
   }
-  tmp->next = newNode;
-  newNode->prev = tmp;
-
-  if (newNode->next == NULL)
+  else
   {
-    tail = newNode;
+    tail = tmp->prev;
   }
+
+  delete tmp;
 }
 
 int main()
@@ -134,33 +152,26 @@ int main()
   Node *head = NULL;
   Node *tail = NULL;
 
-  for (int i = 0; i < Q; i++)
+  for (int i = 0; i < Q; ++i)
   {
-    int pos, val;
-    cin >> pos >> val;
+    int X, V;
+    cin >> X >> V;
 
-    if (pos > size(head))
+    if (X == 0)
     {
-      cout << "Invalid" << endl;
+      insert_head(head, tail, V);
     }
-    else if (pos == 0)
+    else if (X == 1)
     {
-      insert_head(head, tail, val);
-      print_normal(head);
-      print_reverse(tail);
+      insert_tail(head, tail, V);
     }
-    else if (pos == size(head))
+    else if (X == 2)
     {
-      insert_tail(head, tail, val);
-      print_normal(head);
-      print_reverse(tail);
+      delete_at_position(head, tail, V);
     }
-    else
-    {
-      insert_at_position(head, tail, pos, val);
-      print_normal(head);
-      print_reverse(tail);
-    }
+
+    print_normal(head);
+    print_reverse(tail);
   }
 
   return 0;
